@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4338ca">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Forumsbeitrag">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Forumsbeitrag</title>
+<style>
+:root{
+  --bg:#f8f8fb; --fg:#1a1a24; --muted:#575768; --faint:#8b8b9c;
+  --card:#fff; --line:#e3e3ec;
+  --acc:#4338ca; --acc-bg:#eef0ff;
+  --orig:#57534e; --orig-bg:#f1efec;
+  --neu:#c2410c; --neu-bg:#fff1e8;
+  --wahl:#7e22ce; --wahl-bg:#f5ecff;
+  --slot:#b45309; --slot-bg:#fdf3e3;
+  --red:#b91c1c; --red-bg:#fdecec;
+  --ok:#15803d;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#13131a; --fg:#ececf4; --muted:#a9a9bb; --faint:#77778a;
+  --card:#1e1e28; --line:#33333f;
+  --acc:#a5b4fc; --acc-bg:#23264a;
+  --orig:#c9c3bb; --orig-bg:#2a2724;
+  --neu:#fb923c; --neu-bg:#3a2214;
+  --wahl:#d8b4fe; --wahl-bg:#2e1a44;
+  --slot:#fcd34d; --slot-bg:#332708;
+  --red:#f87171; --red-bg:#3a1616;
+  --ok:#4ade80;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:920px;margin:0 auto;padding:20px 16px 90px}
+h1{font-size:22px;margin:0 0 2px;letter-spacing:-.02em}
+.ver{font-weight:700;font-size:11px;font-family:inherit;background:var(--acc-bg);color:var(--acc);padding:2px 7px;border-radius:5px;vertical-align:3px}
+.sub{color:var(--muted);font-size:13.5px;margin:0 0 12px}
+.legend{display:flex;gap:6px 8px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--line)}
+.tab{flex:0 0 auto;background:none;border:1px solid var(--line);color:var(--muted);padding:8px 13px;border-radius:9px;font-weight:600;font-size:14px;font-family:inherit;cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--acc-bg);border-color:var(--acc);color:var(--acc)}
+.hidden{display:none!important}
+.ctrl{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.chip{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:5px 11px;border-radius:16px;font-weight:600;font-size:13px;font-family:inherit;cursor:pointer}
+.chip.on{background:var(--acc-bg);border-color:var(--acc);color:var(--acc)}
+.lbl{font-size:12.5px;color:var(--faint)}
+select{padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--fg);font:15px inherit;max-width:100%}
+.b{display:inline-block;font-weight:800;font-size:10px;font-family:inherit;letter-spacing:.05em;padding:2px 6px;border-radius:4px;vertical-align:2px;white-space:nowrap}
+.b.orig{background:var(--orig-bg);color:var(--orig)} .b.neu{background:var(--neu-bg);color:var(--neu)} .b.wahl{background:var(--wahl-bg);color:var(--wahl)}
+.b.jk{background:var(--acc);color:#fff}
+.lt{width:100%;border-collapse:collapse;margin:0 0 16px;font-size:15px}
+.lt td{padding:7px 8px 7px 8px;border-bottom:1px solid var(--line);vertical-align:top;width:54%}
+.lt td.r{width:46%;color:var(--muted);font-size:14px}
+.lt tr.bh td{background:var(--acc-bg);color:var(--acc);font-weight:700;font-size:13px;font-family:inherit;padding:7px 9px;border-bottom:none}
+.lt tr.gt td{font-weight:700;font-size:12.5px;font-family:inherit;color:var(--slot);padding-top:10px;border-bottom:none}
+.lt tr.fr td:first-child{font-weight:600}
+.lt tr.h-orig td:first-child{border-left:4px solid var(--line)}
+.lt tr.h-neu td:first-child{border-left:4px solid var(--neu)}
+.lt tr.h-wahl td:first-child{border-left:4px solid var(--wahl);background:linear-gradient(90deg,var(--wahl-bg),transparent 60%)}
+.lt td.sl{padding-left:16px}
+.lt td.cov{cursor:pointer;color:transparent!important;background:repeating-linear-gradient(45deg,var(--line) 0 6px,transparent 6px 12px)!important;border-radius:6px}
+.lt td.cov *{visibility:hidden}
+.note{display:block;font-size:12px;color:var(--faint);margin-top:2px}
+.hole{background:var(--slot-bg);color:var(--slot);padding:0 4px;border-radius:4px;font-weight:600}
+.var{background:var(--slot-bg);color:var(--slot);font-weight:700;border-radius:3px;padding:0 2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px}
+.lead{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:14.5px}
+.lead b{color:var(--acc)}
+.lead.wahl{border-left-color:var(--wahl)} .lead.wahl b{color:var(--wahl)}
+h2{font-size:17px;margin:20px 0 8px}
+.step{display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.step:last-child{border-bottom:none}
+.step .n{flex:0 0 26px;color:var(--faint);font-weight:700;font-size:12px;font-family:inherit;padding-top:3px}
+.ftext{font-size:14px;color:var(--muted)}
+.falle{margin-top:6px;font-size:13.5px;color:var(--red);background:var(--red-bg);border-radius:8px;padding:6px 9px}
+.drill{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:18px 16px}
+.dlab{font-weight:700;font-size:11px;font-family:inherit;letter-spacing:.09em;color:var(--faint);text-transform:uppercase;margin-bottom:8px}
+.btn{background:var(--card);border:1px solid var(--line);color:var(--fg);padding:10px 16px;border-radius:9px;font-weight:600;font-size:14.5px;font-family:inherit;cursor:pointer;margin:3px 3px 3px 0}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.pk{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.pk div{padding:5px 0;border-bottom:1px dashed var(--line);font-size:14.5px}
+.syn{padding:6px 0;border-bottom:1px dashed var(--line);font-size:14.5px}
+.syn .aus{color:var(--faint);text-decoration:line-through}
+.choice{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--line)}
+.choice input{margin-top:5px;width:18px;height:18px;flex:0 0 auto}
+.meta{font-size:13px;color:var(--faint);margin-bottom:8px}
+@media(max-width:560px){
+  .wrap{padding:14px 12px 80px} .lt{font-size:14.5px} .lt td.r{font-size:13px}
+  .pk{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Forumsbeitrag <span class="ver" id="ver"></span></h1>
+<p class="sub">Конструктор · Deutsch-Test für den Beruf B2 · черновик под корректора · к каждой немецкой единице русский перевод</p>
+<div class="legend">
+  <span class="b orig">ТВОЁ</span><span class="lbl">из твоего шаблона</span>
+  <span class="b neu">НОВОЕ</span><span class="lbl">идея одобрена, язык проверяет корректор</span>
+  <span class="b wahl">ВЫБОР</span><span class="lbl">варианты — решаете ты и корректор</span>
+</div>
+
+<div class="tabs">
+  <button class="tab on" data-t="lern">Учить · 2 колонки</button>
+  <button class="tab" data-t="muster">Образцы (30 тем)</button>
+  <button class="tab" data-t="umschreiben">Тренажёр: тема → [THEMA]</button>
+  <button class="tab" data-t="pakete">Слова по группам</button>
+  <button class="tab" data-t="start">Как устроено</button>
+  <button class="tab" data-t="wahl">На выбор ✓</button>
+</div>
+
+<section id="lern">
+  <div class="ctrl"><span class="lbl">Что:</span>
+    <button class="chip on" data-v="joker">текст-джокер</button>
+    <button class="chip" data-v="alle">все блоки</button>
+    <button class="chip" data-v="nurjoker">только джокеры</button></div>
+  <div class="ctrl"><span class="lbl">Закрыть:</span>
+    <button class="chip on" data-h="none">ничего</button>
+    <button class="chip" data-h="ru">русский</button>
+    <button class="chip" data-h="de">немецкий</button>
+    <span class="lbl">· нажми на закрытую клетку — откроется</span></div>
+  <p class="ftext" id="lernHint"></p>
+  <div id="lernBody"></div>
+</section>
+
+<section id="muster" class="hidden">
+  <div class="ctrl"><select id="mSel"></select></div>
+  <div id="mHead"></div>
+  <div id="mBody"></div>
+</section>
+
+<section id="umschreiben" class="hidden">
+  <div class="lead"><b>Главный навык ФБ.</b> Читаешь задание → сам пробуешь собрать [THEMA]: глагол задания → обёртка на -ung + синоним. Потом открываешь ответ и сравниваешь. Так же определяешь тип (какой довод 1) и группу слов.</div>
+  <div class="drill">
+    <div class="dlab" id="uLab"></div>
+    <div id="uTask" style="font-size:17px;font-weight:600"></div>
+    <div id="uTaskRu" class="ftext" style="margin-top:6px"></div>
+    <div id="uAns" style="margin-top:12px"></div>
+    <div style="margin-top:12px"><button class="btn pri" id="uShow">Показать ответ</button><button class="btn" id="uNext">Следующая тема</button></div>
+  </div>
+</section>
+
+<section id="pakete" class="hidden">
+  <div class="lead"><b>Слова по 9 группам.</b> Слева — слова, которые пишешь в своих доводах. Ниже — синонимы: слово из задания → чем заменить в [THEMA], чтобы перефразировать, а не переписать.</div>
+  <div id="pkBody"></div>
+</section>
+
+<section id="start" class="hidden"><div id="startBody"></div></section>
+
+<section id="wahl" class="hidden">
+  <div class="lead wahl"><b>Всё, что решаете ты и корректор.</b> Отмечай галочкой выбранный вариант — отметки хранятся только в этом браузере. Потом скажешь мне выбор, и я соберу чистовик.</div>
+  <div id="wahlBody"></div>
+</section>
+</div>
+
+<script src="fb_data.js?v=0.1"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mark=s=>esc(s).replace(/\[([^\]]+)\]/g,'<span class="hole">[$1]</span>').replace(/⟦/g,'<span class="var">').replace(/⟧/g,'</span>').replace(/\n/g,'<br>');
+const badge=h=>h?`<span class="b ${h}">${HERKUNFT[h].label}</span> `:'';
+const badgeRow=h=>(h&&h!=='orig')?badge(h):'';
+const BY=Object.fromEntries(BLOECKE.map(b=>[b.id,b]));
+$('#ver').textContent='v'+DATA_VERSION+' черновик';
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
+  ['lern','muster','umschreiben','pakete','start','wahl'].forEach(s=>$('#'+s).classList.toggle('hidden',s!==b.dataset.t));
+  window.scrollTo(0,0);
+});
+
+/* ---------- УЧИТЬ ---------- */
+let lView='joker', lHide='none';
+const row=(de,ru,h,cls,note,jk)=>`<tr class="${cls||''} h-${h||'orig'}"><td class="de ${cls&&cls.includes('slr')?'sl':''}">${jk?'<span class="b jk">ДЖОКЕР</span> ':''}${badgeRow(h)}${mark(de)}${note?`<span class="note">${esc(note)}</span>`:''}</td><td class="r ru">${mark(ru)}</td></tr>`;
+function blockRows(b, onlyJ){
+  let h=`<tr class="bh"><td colspan="2">${b.id} · ${esc(b.de)} — ${esc(b.ru)}${b.letzter?' · ПОСЛЕДНИЙ':''}</td></tr>`;
+  if(!(b.id==='10')) h+=row(b.rahmen.de,b.rahmen.ru,b.herkunft,'fr');
+  (b.slots||[]).filter(s=>!onlyJ||s.joker||b.id==='10').forEach(s=>h+=row(s.de,s.ru,s.herkunft,'slr',s.note,s.joker));
+  (b.gruppen||[]).forEach(g=>{ const it=g.items.filter(s=>!onlyJ||s.joker); if(!it.length) return;
+    h+=`<tr class="gt"><td colspan="2">${badge(g.herkunft)}${esc(g.titel)}</td></tr>`;
+    it.forEach(s=>h+=row(s.de,s.ru,s.herkunft||g.herkunft,'slr',s.note,s.joker)); });
+  if(!onlyJ && b.falle) h+=`<tr><td colspan="2"><div class="falle">⚠ ${esc(b.falle)}</div></td></tr>`;
+  return h;
+}
+function renderLern(){
+  let h='';
+  if(lView==='joker'){
+    $('#lernHint').innerHTML='<b>Учить первым.</b> Подходит к любой теме. <span class="var">Оранжевое</span> меняешь по заданию: [THEMA] — обёртка, довод 1 — по типу, пример — по теме, плюс — по группе.';
+    const m=MUSTER[0];
+    h='<table class="lt">'+m.saetze.map(s=>row(s.de,s.ru,BY[s.id].herkunft,'')).join('')+'</table>';
+  } else {
+    $('#lernHint').textContent = lView==='nurjoker'?'Только каркасы и джокеры — минимум.':'Все блоки по порядку текста, с вариантами и ловушками.';
+    h='<table class="lt">'+REIHENFOLGE.map(id=>blockRows(BY[id], lView==='nurjoker')).join('')+'</table>';
+  }
+  $('#lernBody').innerHTML=h; applyHide();
+}
+function applyHide(){
+  document.querySelectorAll('#lernBody td.de, #lernBody td.ru').forEach(td=>{
+    const cov=(lHide==='ru'&&td.classList.contains('ru'))||(lHide==='de'&&td.classList.contains('de'));
+    td.classList.toggle('cov',cov); td.onclick=cov?()=>td.classList.remove('cov'):null; });
+}
+document.querySelectorAll('#lern [data-v]').forEach(c=>c.onclick=()=>{ lView=c.dataset.v; document.querySelectorAll('#lern [data-v]').forEach(x=>x.classList.toggle('on',x===c)); renderLern(); });
+document.querySelectorAll('#lern [data-h]').forEach(c=>c.onclick=()=>{ lHide=c.dataset.h; document.querySelectorAll('#lern [data-h]').forEach(x=>x.classList.toggle('on',x===c)); applyHide(); });
+
+/* ---------- ОБРАЗЦЫ ---------- */
+const TY=Object.fromEntries(TYPEN.map(t=>[t.id,t])), PK=Object.fromEntries(PAKETE.map(p=>[p.id,p]));
+$('#mSel').innerHTML=MUSTER.map((m,i)=>`<option value="${i}">${m.n?m.n+'. ':''}${esc(m.titel)} · ${m.woerter} слов</option>`).join('');
+$('#mSel').onchange=renderMuster;
+function renderMuster(){
+  const m=MUSTER[+$('#mSel').value]; const t=THEMEN.find(x=>x.n===m.n);
+  $('#mHead').innerHTML = t ? `<div class="card"><div class="meta">Тип ${t.typ} — ${esc(TY[t.typ].ru)} · Группа ${t.g} — ${esc(PK[t.g].ru)} · Обёртка: ${esc(t.huelle)}</div>
+     <div style="font-weight:600">${esc(t.aufgabe)}</div><div class="ftext">${esc(t.aufgabeRu)}</div></div>`
+   : `<div class="card"><div class="ftext">Текст-джокер: <span class="var">оранжевое</span> — то, что меняешь по заданию.</div></div>`;
+  $('#mBody').innerHTML='<table class="lt">'+m.saetze.map(s=>`<tr class="h-${BY[s.id].herkunft}"><td><span class="lbl">${s.id}</span> ${mark(s.de)}</td><td class="r">${mark(s.ru)}</td></tr>`).join('')+'</table>';
+}
+
+/* ---------- ТРЕНАЖЁР ---------- */
+let uOrder=[], uI=0;
+const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+function uStart(){ uOrder=shuffle(THEMEN.slice()); uI=0; uShowTask(); }
+function uShowTask(){ const t=uOrder[uI%uOrder.length];
+  $('#uLab').textContent=`Тема ${uI%uOrder.length+1} из ${uOrder.length} · ${t.titel}`;
+  $('#uTask').textContent=t.aufgabe; $('#uTaskRu').textContent=t.aufgabeRu; $('#uAns').innerHTML=''; }
+$('#uShow').onclick=()=>{ const t=uOrder[uI%uOrder.length]; const g=[...BY['5'].slots,...BY['5'].gruppen[0].items].find(s=>s.key===t.grund);
+  $('#uAns').innerHTML=`<table class="lt">
+   <tr><td><b>[THEMA]</b><br>Im Team wird über <span class="var">${esc(t.thema.de)}</span> gestritten${t.thema.nach?'<span class="var">'+esc(t.thema.nach)+'</span>':''}.</td><td class="r">В команде спорят о ${esc(t.thema.ru)}.</td></tr>
+   <tr><td><b>Обёртка:</b> ${esc(t.huelle)}</td><td class="r"></td></tr>
+   <tr><td><b>Тип ${t.typ}</b> → довод 1: ${esc(g.de)}</td><td class="r">${esc(TY[t.typ].ru)} → ${esc(g.ru)}</td></tr>
+   <tr><td><b>Группа ${t.g}</b> → пакет «${esc(PK[t.g].de)}»</td><td class="r">${esc(PK[t.g].ru)}</td></tr>
+   <tr><td><b>Пример по теме:</b> … dass ${esc(t.folge.de)}</td><td class="r">… что ${esc(t.folge.ru)}</td></tr></table>`; };
+$('#uNext').onclick=()=>{ uI++; uShowTask(); };
+
+/* ---------- ПАКЕТЫ ---------- */
+$('#pkBody').innerHTML=PAKETE.map(p=>`<div class="card"><div style="font-weight:700;color:var(--acc)">${p.id} · ${esc(p.de)} — ${esc(p.ru)}</div>
+  <div class="pk">${p.woerter.map(w=>`<div><b>${esc(w.de)}</b> — <span class="ftext">${esc(w.ru)}</span></div>`).join('')}</div>
+  <div class="lbl" style="margin-top:10px">Перефразирование: слово из задания → замена</div>
+  ${p.synonyme.map(s=>`<div class="syn"><span class="aus">${esc(s.aus)}</span> → <b>${esc(s.zu)}</b> <span class="ftext">· ${esc(s.ru)}</span></div>`).join('')}</div>`).join('');
+
+/* ---------- КАК УСТРОЕНО ---------- */
+$('#startBody').innerHTML=`
+ <div class="lead"><b>Текст собирается из 12 блоков.</b> Твой старый ФБ остаётся почти целиком (серые). Новое — только вход в тему, пример по нашему отделу, мостик к финалу и сменные доводы.</div>
+ <h2>Цепочка текста</h2><div class="card">${REIHENFOLGE.map(id=>{const b=BY[id];return `<div class="step"><div class="n">${id}</div><div>${badge(b.herkunft)}<b>${esc(b.de)}</b> — ${esc(b.ru)}</div></div>`}).join('')}</div>
+ <h2>Чек-лист разбора задания — 60 секунд</h2><div class="card">${CHECKLISTE.map((c,i)=>`<div class="step"><div class="n">${i+1}</div><div><b>${esc(c.de)}</b> — ${esc(c.ru)}</div></div>`).join('')}</div>
+ <h2>Тип меры → довод 1</h2>${TYPEN.map(t=>{const s=[...BY['5'].slots,...BY['5'].gruppen[0].items].find(x=>x.key===t.grund);
+   return `<div class="card"><div><b>${t.id} · ${esc(t.ru)}</b> — форма ${t.form==='B'?'Б (я выбираю)':'А (я против)'}</div>
+   <div class="ftext">Узнаёшь по словам: <i>${esc(t.signal)}</i></div>
+   <div style="margin-top:6px">… dass <span class="var">${esc(s.de)}</span></div><div class="ftext">… что ${esc(s.ru)}</div></div>`}).join('')}
+ <h2>Две формы текста</h2>${FORMEN.map(f=>`<div class="card"><b>${esc(f.titel)}</b> — ${esc(f.ru)}<div class="ftext">Блоки: ${f.bloecke.join(' · ')}</div></div>`).join('')}
+ <h2>Объём</h2><div class="card ftext">Образцы — 180–225 слов (медиана ~215). Если на тренировке не успеваешь за ~20 минут: первым убираешь мостик (10), потом пример по отделу (8).</div>`;
+
+/* ---------- НА ВЫБОР ---------- */
+const WKEY='fb-wahl-v1'; let picks={};
+try{ picks=JSON.parse(localStorage.getItem(WKEY)||'{}'); }catch(e){}
+function savePicks(){ try{ localStorage.setItem(WKEY,JSON.stringify(picks)); }catch(e){} }
+function renderWahl(){
+  const groups=[];
+  BLOECKE.forEach(b=>{
+    const items=[]; if(b.herkunft==='wahl' && b.id!=='10') items.push({k:b.id+':rahmen',de:b.rahmen.de,ru:b.rahmen.ru,note:'брать блок или нет'});
+    (b.slots||[]).forEach(s=>{ if(s.herkunft==='wahl') items.push({k:b.id+':'+s.key,de:s.de,ru:s.ru,note:s.note}); });
+    (b.gruppen||[]).forEach(g=>g.items.forEach(s=>{ if((s.herkunft||g.herkunft)==='wahl') items.push({k:b.id+':'+(s.key||s.de),de:s.de,ru:s.ru,note:s.note}); }));
+    if(items.length) groups.push({b,items});
+  });
+  $('#wahlBody').innerHTML=groups.map(({b,items})=>`<div class="card"><div style="font-weight:700;color:var(--wahl)">Блок ${b.id} · ${esc(b.de)} — ${esc(b.ru)}</div>
+    ${items.map(it=>`<label class="choice"><input type="checkbox" data-k="${esc(it.k)}" ${picks[it.k]?'checked':''}><div><div>${mark(it.de)}</div><div class="ftext">${mark(it.ru)}</div>${it.note?`<span class="note">${esc(it.note)}</span>`:''}</div></label>`).join('')}</div>`).join('');
+  document.querySelectorAll('#wahlBody input').forEach(i=>i.onchange=()=>{ picks[i.dataset.k]=i.checked; savePicks(); });
+}
+
+renderLern(); renderMuster(); uStart(); renderWahl();
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
